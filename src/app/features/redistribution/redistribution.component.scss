@@ -1,0 +1,24 @@
+.table-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 16px 0;
+}
+
+.table-filters mat-form-field {
+  min-width: 200px;
+  max-width: 260px;
+}
+
+.num {
+  text-align: right;
+}
+
+.actions-header {
+  text-align: right;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}

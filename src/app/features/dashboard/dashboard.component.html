@@ -1,0 +1,196 @@
+<div class="page-container">
+  <section class="dashboard-hero">
+    <div class="page-header dashboard-hero__head">
+      <div>
+        <h1 class="page-title">
+          Hola{{ currentUser()?.fullName ? ', ' + currentUser()?.fullName : '' }}
+        </h1>
+        <p class="page-subtitle">Resumen operativo de la red de centros en tiempo real.</p>
+      </div>
+      <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">
+        Actualizar
+      </button>
+    </div>
+  </section>
+
+  @if (loading()) {
+    <app-loading-spinner message="Cargando tablero…" />
+  } @else if (error()) {
+    <div class="table-card state-block">
+      <app-empty-state title="No se pudo cargar el tablero" [message]="error() ?? ''" icon="⚠" />
+      <button mat-stroked-button type="button" (click)="load()">Reintentar</button>
+    </div>
+  } @else if (data(); as dashboard) {
+    <div class="kpi-grid">
+      <mat-card
+        class="kpi kpi--clickable kpi--primary"
+        appearance="outlined"
+        role="button"
+        tabindex="0"
+        (click)="openCenters()"
+        (keydown.enter)="openCenters()"
+        aria-label="Ver todos los centros"
+      >
+        <span class="kpi__icon kpi__icon--primary" aria-hidden="true">🏥</span>
+        <div class="kpi__body">
+          <p class="kpi__value kpi__value--primary">{{ totalCenters() }}</p>
+          <p class="kpi__label">Centros totales</p>
+          <div class="kpi__trend" title="Tendencia ilustrativa: no representa datos históricos reales" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <span class="kpi__arrow" aria-hidden="true">→</span>
+      </mat-card>
+
+      <mat-card
+        class="kpi kpi--clickable kpi--red"
+        appearance="outlined"
+        role="button"
+        tabindex="0"
+        (click)="openCenters('red')"
+        (keydown.enter)="openCenters('red')"
+        aria-label="Ver centros críticos"
+      >
+        <span class="kpi__icon kpi__icon--red" aria-hidden="true">⚠</span>
+        <div class="kpi__body">
+          <p class="kpi__value kpi__value--red">{{ dashboard.centersByStatus.red }}</p>
+          <p class="kpi__label">Críticos</p>
+          <div class="kpi__trend" title="Tendencia ilustrativa: no representa datos históricos reales" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <span class="kpi__arrow" aria-hidden="true">→</span>
+      </mat-card>
+
+      <mat-card
+        class="kpi kpi--clickable kpi--yellow"
+        appearance="outlined"
+        role="button"
+        tabindex="0"
+        (click)="openCenters('yellow')"
+        (keydown.enter)="openCenters('yellow')"
+        aria-label="Ver centros en alerta"
+      >
+        <span class="kpi__icon kpi__icon--yellow" aria-hidden="true">🔶</span>
+        <div class="kpi__body">
+          <p class="kpi__value kpi__value--yellow">{{ dashboard.centersByStatus.yellow }}</p>
+          <p class="kpi__label">En alerta</p>
+          <div class="kpi__trend" title="Tendencia ilustrativa: no representa datos históricos reales" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <span class="kpi__arrow" aria-hidden="true">→</span>
+      </mat-card>
+
+      <mat-card
+        class="kpi kpi--clickable kpi--green"
+        appearance="outlined"
+        role="button"
+        tabindex="0"
+        (click)="openCenters('green')"
+        (keydown.enter)="openCenters('green')"
+        aria-label="Ver centros estables"
+      >
+        <span class="kpi__icon kpi__icon--green" aria-hidden="true">✅</span>
+        <div class="kpi__body">
+          <p class="kpi__value kpi__value--green">{{ dashboard.centersByStatus.green }}</p>
+          <p class="kpi__label">Estables</p>
+          <div class="kpi__trend" title="Tendencia ilustrativa: no representa datos históricos reales" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <span class="kpi__arrow" aria-hidden="true">→</span>
+      </mat-card>
+    </div>
+
+    <div class="dashboard-grid">
+      <mat-card class="dashboard-card dashboard-card--wide" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Distribución por estado</mat-card-title>
+          <mat-card-subtitle>{{ totalCenters() }} centros registrados</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="status-grid">
+            <div class="status-stat">
+              <div class="status-stat__head">
+                <span class="status-stat__label">Crítico</span>
+                <span class="status-stat__value status-stat__value--red">
+                  {{ dashboard.centersByStatus.red }}
+                </span>
+              </div>
+              <div class="status-bar">
+                <span
+                  class="status-bar__fill status-bar__fill--red"
+                  [style.width]="barWidth(dashboard.centersByStatus.red)"
+                ></span>
+              </div>
+            </div>
+
+            <div class="status-stat">
+              <div class="status-stat__head">
+                <span class="status-stat__label">Alerta</span>
+                <span class="status-stat__value status-stat__value--yellow">
+                  {{ dashboard.centersByStatus.yellow }}
+                </span>
+              </div>
+              <div class="status-bar">
+                <span
+                  class="status-bar__fill status-bar__fill--yellow"
+                  [style.width]="barWidth(dashboard.centersByStatus.yellow)"
+                ></span>
+              </div>
+            </div>
+
+            <div class="status-stat">
+              <div class="status-stat__head">
+                <span class="status-stat__label">Estable</span>
+                <span class="status-stat__value status-stat__value--green">
+                  {{ dashboard.centersByStatus.green }}
+                </span>
+              </div>
+              <div class="status-bar">
+                <span
+                  class="status-bar__fill status-bar__fill--green"
+                  [style.width]="barWidth(dashboard.centersByStatus.green)"
+                ></span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="dashboard-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Operación</mat-card-title>
+          <mat-card-subtitle>Actividad reciente de la red</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (dashboard.pendingRequests > 0) {
+            <div class="op-row">
+              <span class="op-row__icon op-row__icon--accent" aria-hidden="true">🔁</span>
+              <div class="op-row__body">
+                <span class="op-row__value">{{ dashboard.pendingRequests }}</span>
+                <span class="op-row__label">Solicitudes pendientes</span>
+              </div>
+              <a mat-stroked-button routerLink="/redistribution">Ver</a>
+            </div>
+          } @else {
+            <div class="op-empty">
+              <span class="op-empty__icon" aria-hidden="true">🎉</span>
+              <p class="op-empty__title">¡Todo al día!</p>
+              <p class="op-empty__text">No hay solicitudes de redistribución pendientes.</p>
+            </div>
+          }
+
+          <div class="op-row">
+            <span class="op-row__icon op-row__icon--red" aria-hidden="true">🔔</span>
+            <div class="op-row__body">
+              <span class="op-row__value">{{ dashboard.alertsLast24h }}</span>
+              <span class="op-row__label">Alertas últimas 24 h</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>
