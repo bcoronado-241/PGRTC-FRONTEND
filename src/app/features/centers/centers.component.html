@@ -1,0 +1,118 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Centros de atención</h1>
+      <p class="page-subtitle">Consulta y administra los centros registrados y su estado operativo.</p>
+    </div>
+    @if (isAdmin()) {
+      <button mat-flat-button color="primary" type="button" (click)="openForm()">
+        Nuevo centro
+      </button>
+    }
+  </div>
+
+  <div class="table-card">
+    <div class="table-filters">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar</mat-label>
+        <input
+          matInput
+          type="search"
+          [value]="search()"
+          placeholder="Nombre o tipo de centro"
+          (input)="onSearchInput($any($event.target).value)"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="status-field">
+        <mat-label>Estado</mat-label>
+        <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (status()) {
+        <span class="filter-chip">
+          Filtro: {{ statusLabel() }}
+          <button type="button" aria-label="Quitar filtro de estado" (click)="onStatusChange('')">
+            ✕
+          </button>
+        </span>
+      }
+    </div>
+
+    @if (loading()) {
+      <app-loading-spinner message="Cargando centros…" />
+    } @else if (error()) {
+      <div class="state-block">
+        <app-empty-state title="No se pudieron cargar los centros" [message]="error() ?? ''" icon="⚠" />
+        <button mat-stroked-button type="button" (click)="load()">Reintentar</button>
+      </div>
+    } @else if (centers().length === 0) {
+      <app-empty-state
+        title="Sin centros"
+        message="No se encontraron centros para el filtro actual."
+        icon="🏥"
+      />
+    } @else {
+      <div class="table-scroll">
+        <table mat-table [dataSource]="centers()">
+          <ng-container matColumnDef="centerName">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let center">{{ center.centerName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let center">{{ typeLabel(center.type) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="latitude">
+            <th mat-header-cell *matHeaderCellDef>Latitud</th>
+            <td mat-cell *matCellDef="let center">{{ center.latitude }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="longitude">
+            <th mat-header-cell *matHeaderCellDef>Longitud</th>
+            <td mat-cell *matCellDef="let center">{{ center.longitude }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let center">
+              <app-status-badge [status]="center.status" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Acciones</th>
+            <td mat-cell *matCellDef="let center" class="actions-cell">
+              @if (isAdmin()) {
+                <button mat-button type="button" (click)="openForm(center)">Editar</button>
+                <button mat-button color="warn" type="button" (click)="confirmDelete(center)">
+                  Eliminar
+                </button>
+              } @else {
+                <span class="text-muted">Solo lectura</span>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="pageSize()"
+        [pageIndex]="page()"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        showFirstLastButtons
+        (page)="onPage($event)"
+      />
+    }
+  </div>
+</div>

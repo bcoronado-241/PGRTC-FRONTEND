@@ -1,0 +1,47 @@
+.table-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 16px 0;
+}
+
+.search-field {
+  width: 100%;
+  max-width: 360px;
+}
+
+.status-field {
+  width: 220px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.1);
+  color: var(--pgrtc-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.filter-chip button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.actions-header {
+  text-align: right;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}

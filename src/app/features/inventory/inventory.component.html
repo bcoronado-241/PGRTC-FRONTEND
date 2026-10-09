@@ -1,0 +1,122 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Inventario</h1>
+      <p class="page-subtitle">Existencias por centro, mínimos y estado de abastecimiento.</p>
+    </div>
+    @if (canManage()) {
+      <button mat-flat-button color="primary" type="button" (click)="openForm()">
+        Nuevo registro
+      </button>
+    }
+  </div>
+
+  <div class="table-card">
+    <div class="table-filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Centro</mat-label>
+        <mat-select [formControl]="filters.controls.centerId">
+          <mat-option value="">Todos</mat-option>
+          @for (center of centers(); track center.id) {
+            <mat-option [value]="center.id">{{ center.centerName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Insumo</mat-label>
+        <mat-select [formControl]="filters.controls.supplyId">
+          <mat-option value="">Todos</mat-option>
+          @for (supply of supplies(); track supply.id) {
+            <mat-option [value]="supply.id">{{ humanize(supply.supplyName) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select [formControl]="filters.controls.status">
+          <mat-option value="">Todos</mat-option>
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (loading()) {
+      <app-loading-spinner message="Cargando inventario…" />
+    } @else if (error()) {
+      <div class="state-block">
+        <app-empty-state title="No se pudo cargar el inventario" [message]="error() ?? ''" icon="⚠" />
+        <button mat-stroked-button type="button" (click)="load()">Reintentar</button>
+      </div>
+    } @else if (items().length === 0) {
+      <app-empty-state
+        title="Sin registros"
+        message="No hay inventario para los filtros seleccionados."
+        icon="📦"
+      />
+    } @else {
+      <div class="table-scroll">
+        <table mat-table [dataSource]="items()">
+          <ng-container matColumnDef="center">
+            <th mat-header-cell *matHeaderCellDef>Centro</th>
+            <td mat-cell *matCellDef="let item">{{ centerLabel(item) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="supply">
+            <th mat-header-cell *matHeaderCellDef>Insumo</th>
+            <td mat-cell *matCellDef="let item">{{ supplyLabel(item) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef class="num">Cantidad</th>
+            <td mat-cell *matCellDef="let item" class="num">{{ item.quantity }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="minThreshold">
+            <th mat-header-cell *matHeaderCellDef class="num">Mínimo</th>
+            <td mat-cell *matCellDef="let item" class="num">{{ item.minThreshold }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let item">
+              <app-status-badge [status]="item.status" />
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Acciones</th>
+            <td mat-cell *matCellDef="let item" class="actions-cell">
+              @if (canManage()) {
+                <button mat-button type="button" (click)="openForm(item)">Editar</button>
+              }
+              @if (isAdmin()) {
+                <button mat-button color="warn" type="button" (click)="confirmDelete(item)">
+                  Eliminar
+                </button>
+              }
+              @if (!canManage() && !isAdmin()) {
+                <span class="text-muted">Solo lectura</span>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="pageSize()"
+        [pageIndex]="page()"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        showFirstLastButtons
+        (page)="onPage($event)"
+      />
+    }
+  </div>
+</div>
