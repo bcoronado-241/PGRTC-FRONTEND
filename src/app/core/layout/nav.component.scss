@@ -1,0 +1,314 @@
+:host {
+  display: block;
+  overflow-x: hidden;
+}
+
+.app-shell {
+  --sidebar-width: 240px;
+  display: block;
+  min-height: 100vh;
+  background: var(--pgrtc-bg, #f8fafc);
+}
+
+.app-shell--collapsed {
+  --sidebar-width: 64px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width);
+  background: var(--pgrtc-primary, #1e293b);
+  color: #ffffff;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: var(--pgrtc-shadow, 0 1px 3px rgba(15, 23, 42, 0.2));
+  transition: width 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 64px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.brand__mark {
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+}
+
+.sidebar__toggle {
+  flex: 0 0 auto;
+  color: #ffffff;
+  --mdc-icon-button-icon-color: #ffffff;
+  --mat-icon-button-icon-color: #ffffff;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  border-left: 4px solid transparent;
+  color: #e2e8f0;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.nav-link--active {
+  background: rgba(249, 115, 22, 0.28);
+  border-left-color: var(--pgrtc-accent, #f97316);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.nav-link__icon {
+  flex: 0 0 auto;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.nav-link__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__footer {
+  margin-top: auto;
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: flex-start;
+  color: #ffffff;
+  font-weight: 600;
+  --mat-button-text-label-text-color: #ffffff;
+  --mdc-text-button-label-text-color: #ffffff;
+  --mat-button-text-state-layer-color: #ffffff;
+}
+
+.user-trigger:hover {
+  background: rgba(255, 255, 255, 0.12);
+  --mat-button-text-label-text-color: #ffffff;
+  --mdc-text-button-label-text-color: #ffffff;
+}
+
+.user-trigger__avatar {
+  flex: 0 0 auto;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.user-trigger__name {
+  max-width: 150px;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-trigger__caret {
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------------------
+ * Collapsed state (icon-only rail)
+ * ------------------------------------------------------------------------- */
+.app-shell--collapsed .sidebar__header {
+  justify-content: center;
+}
+
+.app-shell--collapsed .brand {
+  display: none;
+}
+
+.app-shell--collapsed .nav-link {
+  justify-content: center;
+  gap: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.app-shell--collapsed .nav-link__label {
+  display: none;
+}
+
+.app-shell--collapsed .sidebar__footer {
+  padding: 8px 4px;
+}
+
+.app-shell--collapsed .user-trigger {
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
+
+.app-shell--collapsed .user-trigger__name,
+.app-shell--collapsed .user-trigger__caret {
+  display: none;
+}
+
+.app-content {
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.25s ease;
+}
+
+.mobile-bar {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.material-symbols-outlined {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------------------
+ * Responsive: overlay drawer on small screens
+ * ------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .mobile-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 56px;
+    padding: 0 8px;
+    background: var(--pgrtc-primary, #1e293b);
+    color: #ffffff;
+    box-shadow: var(--pgrtc-shadow, 0 1px 3px rgba(15, 23, 42, 0.2));
+  }
+
+  .mobile-bar__menu {
+    color: #ffffff;
+    --mdc-icon-button-icon-color: #ffffff;
+    --mat-icon-button-icon-color: #ffffff;
+  }
+
+  .mobile-bar__brand {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .mobile-bar__spacer {
+    flex: 1 1 auto;
+  }
+
+  .sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  .app-content {
+    margin-left: 0;
+  }
+
+  .sidebar__toggle {
+    display: none;
+  }
+
+  .sidebar__header {
+    justify-content: flex-start;
+  }
+
+  /* Mobile always shows the full drawer, even if "collapsed" was persisted. */
+  .app-shell--collapsed .brand {
+    display: flex;
+  }
+
+  .app-shell--collapsed .sidebar__header {
+    justify-content: flex-start;
+  }
+
+  .app-shell--collapsed .nav-link {
+    justify-content: flex-start;
+    gap: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .app-shell--collapsed .nav-link__label {
+    display: block;
+  }
+
+  .app-shell--collapsed .sidebar__footer {
+    padding: 8px;
+  }
+
+  .app-shell--collapsed .user-trigger {
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .app-shell--collapsed .user-trigger__name {
+    display: block;
+  }
+
+  .app-shell--collapsed .user-trigger__caret {
+    display: inline;
+  }
+}
