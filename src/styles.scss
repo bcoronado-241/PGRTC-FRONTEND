@@ -1,0 +1,403 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// ---------------------------------------------------------------------------
+// Tema PGRTC sobre Angular Material (Material 3)
+// Paleta corporativa aplicada como tema de Material + variables CSS.
+// ---------------------------------------------------------------------------
+
+$pgrtc-primary-palette: map.merge(
+  mat.$blue-palette,
+  (
+    40: #1e293b,
+    // primario: slate profundo
+    error: map.merge(map.get(mat.$blue-palette, error), (40: #dc2626)),
+    secondary: map.merge(map.get(mat.$blue-palette, secondary), (40: #475569)),
+  )
+);
+
+$pgrtc-tertiary-palette: map.merge(
+  mat.$orange-palette,
+  (
+    40: #f97316,
+    // acento: naranja intenso
+  )
+);
+
+html {
+  height: 100%;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: $pgrtc-primary-palette,
+        tertiary: $pgrtc-tertiary-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+// Variables globales de la paleta corporativa (usadas por componentes propios).
+:root {
+  --pgrtc-primary: #1e293b;
+  --pgrtc-secondary: #475569;
+  --pgrtc-accent: #f97316;
+  --pgrtc-danger: #b91c1c;
+  --pgrtc-success: #16a34a;
+  --pgrtc-warning: #f59e0b;
+  --pgrtc-error: #dc2626;
+  --pgrtc-bg: #f8fafc;
+  --pgrtc-surface: #ffffff;
+  --pgrtc-text: #0f172a;
+  --pgrtc-muted: #64748b;
+  --pgrtc-border: #e2e8f0;
+  --pgrtc-radius: 12px;
+  --pgrtc-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--pgrtc-bg);
+  color: var(--pgrtc-text);
+  font-family: Roboto, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+// ---------------------------------------------------------------------------
+// Utilidades compartidas
+// ---------------------------------------------------------------------------
+.page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  box-sizing: border-box;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--pgrtc-primary);
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--pgrtc-muted);
+}
+
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.table-card {
+  background: var(--pgrtc-surface);
+  border: 1px solid var(--pgrtc-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--pgrtc-shadow);
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table.mat-mdc-table {
+  width: 100%;
+  min-width: 640px;
+  background: transparent;
+}
+
+table.mat-mdc-table .mat-mdc-header-row {
+  background: #f1f5f9;
+}
+
+table.mat-mdc-table .mat-mdc-header-cell {
+  color: var(--pgrtc-primary);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+table.mat-mdc-table .mat-mdc-row {
+  transition: background-color 0.15s ease;
+}
+
+table.mat-mdc-table .mat-mdc-row:hover {
+  background: #f8fafc;
+}
+
+table.mat-mdc-table .mat-mdc-cell {
+  color: var(--pgrtc-text);
+  border-bottom-color: var(--pgrtc-border);
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+table.mat-mdc-table td.actions-cell,
+table.mat-mdc-table th.actions-header {
+  white-space: nowrap;
+}
+
+table.mat-mdc-table th.actions-header::before {
+  content: '⚙ ';
+  opacity: 0.7;
+}
+
+table.mat-mdc-table td.actions-cell .mat-mdc-button {
+  min-width: auto;
+  padding: 0 10px;
+  font-weight: 600;
+}
+
+.state-block {
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.form-card {
+  background: var(--pgrtc-surface);
+  border: 1px solid var(--pgrtc-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--pgrtc-shadow);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-muted {
+  color: var(--pgrtc-muted);
+  font-size: 0.85rem;
+}
+
+// ---------------------------------------------------------------------------
+// Menú desplegable de usuario (se renderiza en overlay fuera del componente)
+// ---------------------------------------------------------------------------
+.mat-mdc-menu-item .menu-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
+.mat-mdc-menu-item.menu-item--danger,
+.mat-mdc-menu-item.menu-item--danger .menu-item__icon {
+  color: var(--pgrtc-danger);
+}
+
+// ---------------------------------------------------------------------------
+// Pantallas de autenticación (login / registro)
+// ---------------------------------------------------------------------------
+.auth-shell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: var(--pgrtc-bg);
+}
+
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--pgrtc-surface);
+  border: 1px solid var(--pgrtc-border);
+  border-radius: 18px;
+  padding: 30px 32px 26px;
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.14), 0 3px 8px rgba(15, 23, 42, 0.06);
+}
+
+.auth-heading {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pgrtc-primary);
+}
+
+.auth-subheading {
+  margin: 6px 0 22px;
+  font-size: 0.92rem;
+  color: var(--pgrtc-muted);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-error {
+  margin: 2px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.88rem;
+}
+
+.auth-submit {
+  height: 48px;
+  margin-top: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  --mdc-filled-button-container-color: var(--pgrtc-accent);
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-button-filled-container-color: var(--pgrtc-accent);
+  --mat-button-filled-label-text-color: #ffffff;
+  background-color: var(--pgrtc-accent);
+  color: #ffffff;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background-color: #ea580c;
+  --mdc-filled-button-container-color: #ea580c;
+}
+
+.auth-alt {
+  margin: 20px 0 2px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--pgrtc-muted);
+}
+
+.auth-alt a {
+  color: var(--pgrtc-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-alt a:hover {
+  text-decoration: underline;
+}
+
+.auth-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 48px;
+  color: #ffffff;
+  background: linear-gradient(160deg, #1e293b 0%, #334155 46%, #475569 100%);
+  overflow: hidden;
+}
+
+.auth-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 15%, rgba(249, 115, 22, 0.3), transparent 45%);
+  pointer-events: none;
+}
+
+.auth-hero__svg {
+  position: relative;
+  width: min(72%, 360px);
+  height: auto;
+}
+
+.auth-hero__title {
+  position: relative;
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.auth-hero__tagline {
+  position: relative;
+  margin: 0;
+  max-width: 380px;
+  text-align: center;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.auth-hero__badges {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.auth-hero__badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.8rem;
+  color: #eaf1f8;
+}
+
+@media (max-width: 900px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero {
+    order: -1;
+    gap: 10px;
+    padding: 26px 20px;
+  }
+
+  .auth-hero__svg {
+    width: 150px;
+  }
+
+  .auth-hero__tagline,
+  .auth-hero__badges {
+    display: none;
+  }
+}
